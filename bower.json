@@ -1,0 +1,27 @@
+{
+  "name": "tungestene-ride-to-the-sky",
+  "version": "0.0.0",
+  "authors": [
+    "Steven Rémot <steven.remot@gmail.com>"
+  ],
+  "description": "HTML5 game in which you must throw a carousel as far as possible.",
+  "main": "index.html",
+  "keywords": [
+    "game",
+    "carousel",
+    "tungestene",
+    "onegameamonth"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "phaser-official": "~2.0.7"
+  }
+}

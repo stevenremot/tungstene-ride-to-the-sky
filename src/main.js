@@ -1,5 +1,3 @@
-/* global Phaser */
+import {Bootstrap} from "./Bootstrap";
 
-import {Game} from "./Game";
-
-(new Game()).start();
+(new Bootstrap()).start();

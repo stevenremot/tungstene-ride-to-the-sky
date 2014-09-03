@@ -2342,19 +2342,23 @@ System.get("traceur-runtime@0.0.55/src/runtime/polyfill-import" + '');
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 Object.defineProperties(exports, {
-  Game: {get: function() {
-      return Game;
+  Bootstrap: {get: function() {
+      return Bootstrap;
     }},
   __esModule: {value: true}
 });
-var Game = function Game() {
-  this.game = null;
+var Game = require("./Game").Game;
+var Bootstrap = function Bootstrap() {
+  this._phaserGame = null;
+  this._game = null;
 };
-($traceurRuntime.createClass)(Game, {
+($traceurRuntime.createClass)(Bootstrap, {
   preload: function() {},
-  create: function() {},
+  create: function() {
+    this._game = new Game(this._phaserGame);
+  },
   start: function() {
-    this.game = new Phaser.Game(800, 600, Phaser.AUTO, "tungstene-target", {
+    this._phaserGame = new Phaser.Game(640, 480, Phaser.AUTO, "tungstene-target", {
       preload: this.preload.bind(this),
       create: this.create.bind(this)
     });
@@ -2362,13 +2366,100 @@ var Game = function Game() {
 }, {});
 
 
-},{}],2:[function(require,module,exports){
+},{"./Game":2}],2:[function(require,module,exports){
 "use strict";
-var Game = require("./Game").Game;
-(new Game()).start();
+Object.defineProperties(exports, {
+  Game: {get: function() {
+      return Game;
+    }},
+  __esModule: {value: true}
+});
+var Scene = require("./Scene").Scene;
+var Game = function Game(game) {
+  this._phaserGame = game;
+  this._scene = new Scene(game);
+  this._init();
+};
+($traceurRuntime.createClass)(Game, {_init: function() {
+    this._scene.addSprite((function(game) {
+      var graphics = game.add.graphics(0, 0);
+      graphics.lineStyle(1, 0x0000ff, 1);
+      graphics.drawRect(50, 250, 100, 100);
+      return graphics;
+    }));
+  }}, {});
 
 
-},{"./Game":1}]},{},[1,2])
+},{"./Scene":3}],3:[function(require,module,exports){
+"use strict";
+Object.defineProperties(exports, {
+  Scene: {get: function() {
+      return Scene;
+    }},
+  __esModule: {value: true}
+});
+var Scene = function Scene(game) {
+  this._phaserGame = game;
+  this._sprites = [];
+  this._groups = [];
+};
+($traceurRuntime.createClass)(Scene, {
+  addGroup: function(groupConstructor) {
+    for (var args = [],
+        $__5 = 1; $__5 < arguments.length; $__5++)
+      args[$__5 - 1] = arguments[$__5];
+    var group = groupConstructor.apply(null, $traceurRuntime.spread([this._phaserGame], args));
+    this._groups.push(group);
+    return group;
+  },
+  addSprite: function(spriteConstructor, group) {
+    for (var args = [],
+        $__6 = 2; $__6 < arguments.length; $__6++)
+      args[$__6 - 2] = arguments[$__6];
+    var target = this._phaserGame;
+    if (group instanceof Phaser.Group) {
+      target = group;
+    } else {
+      args = [group].concat(args);
+    }
+    var sprite = spriteConstructor.apply(null, $traceurRuntime.spread([target], args));
+    this._sprites.push(sprite);
+    return sprite;
+  },
+  clear: function() {
+    for (var $__1 = this._sprites[Symbol.iterator](),
+        $__2; !($__2 = $__1.next()).done; ) {
+      var sprite = $__2.value;
+      {
+        this._removeSprite(sprite);
+      }
+    }
+    for (var $__3 = this._groups[Symbol.iterator](),
+        $__4; !($__4 = $__3.next()).done; ) {
+      var group = $__4.value;
+      {
+        this._removeGroup(group);
+      }
+    }
+  },
+  _removeGroup: function(group) {
+    group.destroy();
+    this._group.splice(this._groups.indexOf(group), 1);
+  },
+  _removeSprite: function(sprite) {
+    sprite.destroy();
+    this._sprites.splice(this._sprites.indexOf(sprite), 1);
+  }
+}, {});
+
+
+},{}],4:[function(require,module,exports){
+"use strict";
+var Bootstrap = require("./Bootstrap").Bootstrap;
+(new Bootstrap()).start();
+
+
+},{"./Bootstrap":1}]},{},[1,2,3,4])
 //
 
 //# sourceMappingURL=tungstene.js.map

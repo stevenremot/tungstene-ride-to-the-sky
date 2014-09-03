@@ -1,27 +1,37 @@
-import {Scene} from "./Scene";
-
 /**
- * Runs the "game" part of the game
+ * In charge of starting and running scenes
+ *
+ * Scenes are started using scene constructors. These are functions that takes
+ * as arguments the Phaser game and an end callback, end that returns a Scene
+ * object.
+ *
+ * The end callback is a function that must be called when the current scene is
+ * finished, and that a new scene must start. It takes as parameter the label
+ * of the scene to start (see constructor).
  */
 export class Game {
     /**
      * Class constructor
-     * 
+     *
      * @param {Phaser.Game} game
+     * @param {Object} scenes An object which keys are scene names, and values
+     *                 are associated scene constructors.
      */
-    constructor(game) {
+    constructor(game, scenes) {
         this._phaserGame = game;
-        this._scene = new Scene(game);
-        this._init();
+        this._scenes = scenes;
+        this._currentScene = null;
     }
-    
-    _init() {
-        this._scene.addSprite((game) => {
-            var graphics = game.add.graphics(0, 0);
-            graphics.lineStyle(1, 0x0000ff, 1);
-            graphics.drawRect(50, 250, 100, 100);
-            return graphics;
-        });
+
+    _switchScene(newScene) {
+        this._currentScene.clear();
+        this.startScene(scene);
     }
-    
+
+    startScene(scene) {
+        this._currentScene = this._scenes[scene](
+            this._phaserGame,
+            this._switchScene.bind(this)
+        );
+    }
 }

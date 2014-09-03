@@ -2348,6 +2348,7 @@ Object.defineProperties(exports, {
   __esModule: {value: true}
 });
 var Game = require("./Game").Game;
+var createThrowScene = require("./ThrowScene").createScene;
 var Bootstrap = function Bootstrap() {
   this._phaserGame = null;
   this._game = null;
@@ -2355,7 +2356,8 @@ var Bootstrap = function Bootstrap() {
 ($traceurRuntime.createClass)(Bootstrap, {
   preload: function() {},
   create: function() {
-    this._game = new Game(this._phaserGame);
+    this._game = new Game(this._phaserGame, {"throw-ground": createThrowScene});
+    this._game.startScene("throw-ground");
   },
   start: function() {
     this._phaserGame = new Phaser.Game(640, 480, Phaser.AUTO, "tungstene-target", {
@@ -2366,7 +2368,7 @@ var Bootstrap = function Bootstrap() {
 }, {});
 
 
-},{"./Game":2}],2:[function(require,module,exports){
+},{"./Game":2,"./ThrowScene":4}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperties(exports, {
   Game: {get: function() {
@@ -2374,23 +2376,23 @@ Object.defineProperties(exports, {
     }},
   __esModule: {value: true}
 });
-var Scene = require("./Scene").Scene;
-var Game = function Game(game) {
+var Game = function Game(game, scenes) {
   this._phaserGame = game;
-  this._scene = new Scene(game);
-  this._init();
+  this._scenes = scenes;
+  this._currentScene = null;
 };
-($traceurRuntime.createClass)(Game, {_init: function() {
-    this._scene.addSprite((function(game) {
-      var graphics = game.add.graphics(0, 0);
-      graphics.lineStyle(1, 0x0000ff, 1);
-      graphics.drawRect(50, 250, 100, 100);
-      return graphics;
-    }));
-  }}, {});
+($traceurRuntime.createClass)(Game, {
+  _switchScene: function(newScene) {
+    this._currentScene.clear();
+    this.startScene(scene);
+  },
+  startScene: function(scene) {
+    this._currentScene = this._scenes[scene](this._phaserGame, this._switchScene.bind(this));
+  }
+}, {});
 
 
-},{"./Scene":3}],3:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperties(exports, {
   Scene: {get: function() {
@@ -2455,11 +2457,31 @@ var Scene = function Scene(game) {
 
 },{}],4:[function(require,module,exports){
 "use strict";
+Object.defineProperties(exports, {
+  createScene: {get: function() {
+      return createScene;
+    }},
+  __esModule: {value: true}
+});
+var Scene = require("./Scene").Scene;
+function createScene(game, endCallback) {
+  var scene = new Scene(game);
+  scene.addSprite((function() {
+    var graphics = game.add.graphics(0, 0);
+    graphics.lineStyle(2, 0xff0000, 1);
+    graphics.drawRect(10, 10, 100, 100);
+  }));
+  return scene;
+}
+
+
+},{"./Scene":3}],5:[function(require,module,exports){
+"use strict";
 var Bootstrap = require("./Bootstrap").Bootstrap;
 (new Bootstrap()).start();
 
 
-},{"./Bootstrap":1}]},{},[1,2,3,4])
+},{"./Bootstrap":1}]},{},[1,2,3,4,5])
 //
 
 //# sourceMappingURL=tungstene.js.map

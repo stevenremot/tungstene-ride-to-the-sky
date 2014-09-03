@@ -1,0 +1,17 @@
+{
+  "name": "tungstene-ride-to-the-sky",
+  "version": "0.0.0",
+  "description": "Throw the carousel as far as possible.",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Steven Rémot <steven.remot@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "es6ify": "^1.3.0",
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^3.0.0",
+    "grunt-contrib-watch": "^0.6.1"
+  }
+}

@@ -1,5 +1,5 @@
 /* global Phaser */
 
-import {Game} from './Game';
+import {Game} from "./Game";
 
-(new Game).start();
+(new Game()).start();

@@ -34,12 +34,19 @@ module.exports = function (grunt) {
                     spawn: false
                 }
             }
+        },
+        jshint: {
+            all: ['src/**/*.js'],
+            options: {
+                jshintrc: '.jshintrc'
+            }
         }
     });
 
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
 
-    grunt.registerTask('build:dev', ['browserify:dev', 'concat:dev'])
+    grunt.registerTask('build:dev', ['jshint', 'browserify:dev', 'concat:dev'])
 };

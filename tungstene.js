@@ -2354,7 +2354,7 @@ var Game = function Game() {
   preload: function() {},
   create: function() {},
   start: function() {
-    this.game = new Phaser.Game(800, 600, Phaser.AUTO, 'tungstene-target', {
+    this.game = new Phaser.Game(800, 600, Phaser.AUTO, "tungstene-target", {
       preload: this.preload.bind(this),
       create: this.create.bind(this)
     });
@@ -2364,8 +2364,8 @@ var Game = function Game() {
 
 },{}],2:[function(require,module,exports){
 "use strict";
-var Game = require('./Game').Game;
-(new Game).start();
+var Game = require("./Game").Game;
+(new Game()).start();
 
 
 },{"./Game":1}]},{},[1,2])

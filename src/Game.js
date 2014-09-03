@@ -18,7 +18,7 @@ export class Game {
             800, 
             600,
             Phaser.AUTO,
-            'tungstene-target',
+            "tungstene-target",
             {
                 preload: this.preload.bind(this),
                 create: this.create.bind(this)

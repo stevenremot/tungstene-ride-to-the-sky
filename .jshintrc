@@ -1,5 +1,6 @@
 {
     "esnext": true,
-    "camelCase": true,
-    "quotMark": "double"
+    "camelcase": true,
+    "quotmark": "double",
+    "predef": ["Phaser"]
 }

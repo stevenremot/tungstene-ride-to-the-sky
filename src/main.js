@@ -1,3 +1,3 @@
 import {Bootstrap} from "./Bootstrap";
 
-(new Bootstrap()).start();
+window.addEventListener("load", () => (new Bootstrap()).start());

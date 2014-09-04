@@ -61,43 +61,44 @@ export class Scene {
         var target = this._phaserGame;
         if (group instanceof Phaser.Group) {
             target = group;
-        } else {
+        }
+        else {
             args = [group].concat(args);
         }
         var sprite = spriteConstructor(target, ...args);
         this._sprites.push(sprite);
         return sprite;
     }
-    
+
     /**
      * Remove all the groups and sprites
-     * 
+     *
      * Also remove them from the game
      */
     clear() {
         for (var sprite of this._sprites) {
             this._removeSprite(sprite);
         }
-        
+
         for (var group of this._groups) {
             this._removeGroup(group);
         }
     }
-    
+
     /**
      * Remove a group from the groups list
-     * 
+     *
      * @param {Phaser.Group} group
      */
     _removeGroup(group) {
         group.destroy();
         this._group.splice(this._groups.indexOf(group), 1);
-        
+
     }
-    
+
     /**
      * Remove a sprite from the srites list
-     * 
+     *
      * @param {Phaser.Sprite} sprite
      */
     _removeSprite(sprite) {

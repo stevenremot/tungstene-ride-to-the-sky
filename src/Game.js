@@ -21,6 +21,10 @@ export class Game {
         this._phaserGame = game;
         this._scenes = scenes;
         this._currentScene = null;
+
+        this._phaserGame.physics.startSystem(Phaser.Physics.P2JS);
+        game.physics.p2.gravity.y = 1200;
+        game.physics.p2.restitution = 0.8;
     }
 
     _switchScene(newScene) {

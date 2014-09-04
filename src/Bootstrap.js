@@ -6,7 +6,7 @@ from "./Game";
 import {
     createScene as createThrowScene
 }
-from "./ThrowScene";
+from "./throw-ground/scene";
 
 /**
  * Class in charge of starting the game

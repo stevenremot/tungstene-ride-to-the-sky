@@ -2348,7 +2348,7 @@ Object.defineProperties(exports, {
   __esModule: {value: true}
 });
 var Game = require("./Game").Game;
-var createThrowScene = require("./ThrowScene").createScene;
+var createThrowScene = require("./throw-ground/scene").createScene;
 var Bootstrap = function Bootstrap() {
   this._phaserGame = null;
   this._game = null;
@@ -2368,7 +2368,7 @@ var Bootstrap = function Bootstrap() {
 }, {});
 
 
-},{"./Game":2,"./ThrowScene":4}],2:[function(require,module,exports){
+},{"./Game":2,"./throw-ground/scene":5}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperties(exports, {
   Game: {get: function() {
@@ -2380,6 +2380,9 @@ var Game = function Game(game, scenes) {
   this._phaserGame = game;
   this._scenes = scenes;
   this._currentScene = null;
+  this._phaserGame.physics.startSystem(Phaser.Physics.P2JS);
+  game.physics.p2.gravity.y = 1200;
+  game.physics.p2.restitution = 0.8;
 };
 ($traceurRuntime.createClass)(Game, {
   _switchScene: function(newScene) {
@@ -2457,31 +2460,108 @@ var Scene = function Scene(game) {
 
 },{}],4:[function(require,module,exports){
 "use strict";
+var Bootstrap = require("./Bootstrap").Bootstrap;
+window.addEventListener("load", (function() {
+  return (new Bootstrap()).start();
+}));
+
+
+},{"./Bootstrap":1}],5:[function(require,module,exports){
+"use strict";
 Object.defineProperties(exports, {
   createScene: {get: function() {
       return createScene;
     }},
   __esModule: {value: true}
 });
-var Scene = require("./Scene").Scene;
+var Scene = require("../Scene").Scene;
+var $__1 = require("./sprites"),
+    createCarouselBaseSprite = $__1.createCarouselBaseSprite,
+    createCarouselSasSprite = $__1.createCarouselSasSprite,
+    createGroundCollisionSprite = $__1.createGroundCollisionSprite;
 function createScene(game, endCallback) {
   var scene = new Scene(game);
-  scene.addSprite((function() {
-    var graphics = game.add.graphics(0, 0);
-    graphics.lineStyle(2, 0xff0000, 1);
-    graphics.drawRect(10, 10, 100, 100);
-  }));
+  scene.addSprite(createCarouselBaseSprite, {
+    x: 300,
+    y: 0,
+    w: 20,
+    h: 200
+  });
+  var sas = scene.addSprite(createCarouselSasSprite, {
+    x: 200,
+    y: 150,
+    w: 50,
+    h: 20
+  });
+  var ground = scene.addSprite(createGroundCollisionSprite, {
+    sas: sas,
+    w: 500,
+    y: 0
+  });
   return scene;
 }
 
 
-},{"./Scene":3}],5:[function(require,module,exports){
+},{"../Scene":3,"./sprites":6}],6:[function(require,module,exports){
 "use strict";
-var Bootstrap = require("./Bootstrap").Bootstrap;
-(new Bootstrap()).start();
+Object.defineProperties(exports, {
+  createGroundCollisionSprite: {get: function() {
+      return createGroundCollisionSprite;
+    }},
+  createCarouselBaseSprite: {get: function() {
+      return createCarouselBaseSprite;
+    }},
+  createCarouselSasSprite: {get: function() {
+      return createCarouselSasSprite;
+    }},
+  __esModule: {value: true}
+});
+function createGroundCollisionSprite(game, $__0) {
+  var $__1 = $traceurRuntime.assertObject($__0),
+      sas = $__1.sas,
+      w = $__1.w,
+      y = $__1.y;
+  var bitmap = game.add.bitmapData(w, 1);
+  bitmap.fill(0, 0, 0, 0);
+  var ground = game.add.sprite(sas.position.x, game.height - y);
+  game.physics.p2.enable(ground);
+  ground.body.setRectangle(w, 1);
+  ground.body.static = true;
+  ground.update = function() {
+    this.position.x = sas.position.x;
+  };
+  return ground;
+}
+function createCarouselBaseSprite(game, $__0) {
+  var $__1 = $traceurRuntime.assertObject($__0),
+      x = $__1.x,
+      y = $__1.y,
+      w = $__1.w,
+      h = $__1.h;
+  var bitmap = game.add.bitmapData(w, h);
+  bitmap.fill(255, 0, 0, 1);
+  var base = game.add.sprite(x - w / 2, game.height - y - h, bitmap);
+  return base;
+}
+function createCarouselSasSprite(game, $__0) {
+  var $__1 = $traceurRuntime.assertObject($__0),
+      x = $__1.x,
+      y = $__1.y,
+      w = $__1.w,
+      h = $__1.h;
+  var bitmap = game.add.bitmapData(w, h);
+  bitmap.fill(0, 255, 0, 1);
+  var sas = game.add.sprite(x - w / 2, game.height - y + h / 2, bitmap);
+  game.physics.p2.enable(sas);
+  sas.body.setRectangle(w, h);
+  sas.body.mass = 5;
+  sas.body.velocity.x = 20;
+  sas.body.velocity.y = -20;
+  return sas;
+}
 
 
-},{"./Bootstrap":1}]},{},[1,2,3,4,5])
+},{}]},{},[1,2,3,4,5,6])
 //
 
 //# sourceMappingURL=tungstene.js.map

@@ -2478,25 +2478,40 @@ var Scene = require("../Scene").Scene;
 var $__1 = require("./sprites"),
     createCarouselBaseSprite = $__1.createCarouselBaseSprite,
     createCarouselSasSprite = $__1.createCarouselSasSprite,
-    createGroundCollisionSprite = $__1.createGroundCollisionSprite;
+    createGroundCollisionSprite = $__1.createGroundCollisionSprite,
+    createCarouselLinkSprite = $__1.createCarouselLinkSprite;
 function createScene(game, endCallback) {
   var scene = new Scene(game);
-  scene.addSprite(createCarouselBaseSprite, {
+  var groundGroup = game.physics.p2.createCollisionGroup();
+  var carouselGroup = game.physics.p2.createCollisionGroup();
+  var base = scene.addSprite(createCarouselBaseSprite, {
     x: 300,
     y: 0,
     w: 20,
-    h: 200
+    h: 200,
+    group: carouselGroup
   });
   var sas = scene.addSprite(createCarouselSasSprite, {
     x: 200,
     y: 150,
     w: 50,
-    h: 20
+    h: 20,
+    group: carouselGroup
   });
-  var ground = scene.addSprite(createGroundCollisionSprite, {
+  scene.addSprite(createGroundCollisionSprite, {
     sas: sas,
-    w: 500,
-    y: 0
+    w: 200,
+    y: 0,
+    group: groundGroup
+  });
+  scene.addSprite(createCarouselLinkSprite, {
+    base: base,
+    sas: sas,
+    posInBase: new Phaser.Point(0, 0),
+    posInSas: new Phaser.Point(0, 0),
+    offset: 5,
+    w: 10,
+    group: carouselGroup
   });
   return scene;
 }
@@ -2514,21 +2529,26 @@ Object.defineProperties(exports, {
   createCarouselSasSprite: {get: function() {
       return createCarouselSasSprite;
     }},
+  createCarouselLinkSprite: {get: function() {
+      return createCarouselLinkSprite;
+    }},
   __esModule: {value: true}
 });
 function createGroundCollisionSprite(game, $__0) {
   var $__1 = $traceurRuntime.assertObject($__0),
       sas = $__1.sas,
       w = $__1.w,
-      y = $__1.y;
-  var bitmap = game.add.bitmapData(w, 1);
+      y = $__1.y,
+      group = $__1.group;
+  var bitmap = game.add.bitmapData(w, 100);
   bitmap.fill(0, 0, 0, 0);
-  var ground = game.add.sprite(sas.position.x, game.height - y);
-  game.physics.p2.enable(ground);
-  ground.body.setRectangle(w, 1);
+  var ground = game.add.sprite(sas.position.x, game.height - y + 100);
+  game.physics.p2.enable(ground, true);
+  ground.body.setRectangle(w, 100);
   ground.body.static = true;
+  ground.body.setCollisionGroup(group);
   ground.update = function() {
-    this.position.x = sas.position.x;
+    this.body.x = sas.position.x;
   };
   return ground;
 }
@@ -2537,10 +2557,16 @@ function createCarouselBaseSprite(game, $__0) {
       x = $__1.x,
       y = $__1.y,
       w = $__1.w,
-      h = $__1.h;
+      h = $__1.h,
+      group = $__1.group;
   var bitmap = game.add.bitmapData(w, h);
   bitmap.fill(255, 0, 0, 1);
-  var base = game.add.sprite(x - w / 2, game.height - y - h, bitmap);
+  var base = game.add.sprite(x, game.height - y - h * 0.9, bitmap);
+  game.physics.p2.enable(base, true);
+  base.anchor.setTo(0.5, 0.1);
+  base.body.static = true;
+  base.body.setRectangle(1, 1, 0, 0.5);
+  base.body.setCollisionGroup(group);
   return base;
 }
 function createCarouselSasSprite(game, $__0) {
@@ -2548,16 +2574,48 @@ function createCarouselSasSprite(game, $__0) {
       x = $__1.x,
       y = $__1.y,
       w = $__1.w,
-      h = $__1.h;
+      h = $__1.h,
+      group = $__1.group,
+      groundGroup = $__1.groundGroup;
   var bitmap = game.add.bitmapData(w, h);
   bitmap.fill(0, 255, 0, 1);
-  var sas = game.add.sprite(x - w / 2, game.height - y + h / 2, bitmap);
+  var sas = game.add.sprite(x, game.height - y, bitmap);
   game.physics.p2.enable(sas);
   sas.body.setRectangle(w, h);
   sas.body.mass = 5;
-  sas.body.velocity.x = 20;
-  sas.body.velocity.y = -20;
+  sas.anchor.setTo(0.5, 0.5);
+  sas.body.setCollisionGroup(group);
+  sas.body.collidesWith = [groundGroup];
   return sas;
+}
+function createCarouselLinkSprite(game, $__0) {
+  var $__1 = $traceurRuntime.assertObject($__0),
+      base = $__1.base,
+      sas = $__1.sas,
+      posInBase = $__1.posInBase,
+      posInSas = $__1.posInSas,
+      w = $__1.w,
+      offset = $__1.offset,
+      group = $__1.group;
+  var p1 = Phaser.Point.add(base.position, posInBase);
+  var p2 = Phaser.Point.add(sas.position, posInSas);
+  var diff = Phaser.Point.subtract(p2, p1);
+  var distance = Phaser.Point.distance(p1, p2);
+  var h = distance + 2 * offset;
+  var bitmap = game.add.bitmapData(w, h);
+  bitmap.fill(0, 0, 255, 1);
+  var linkPosition = Phaser.Point.add(p1, Phaser.Point.divide(diff, new Phaser.Point(2, 2)));
+  var link = game.add.sprite(linkPosition.x, linkPosition.y, bitmap);
+  game.physics.p2.enable(link);
+  var angle = Phaser.Point.angle(diff, new Phaser.Point(0, 0)) + Math.PI / 2;
+  link.body.setRectangle(w, h);
+  link.body.angle = angle * 180 / Math.PI;
+  link.body.mass = 0.1;
+  link.body.setCollisionGroup(group);
+  var maxForce = 20000000;
+  game.physics.p2.createRevoluteConstraint(base, [0, 0], link, [0, -distance / 2], maxForce);
+  game.physics.p2.createRevoluteConstraint(link, [0, distance / 2], sas, [0, 0], maxForce);
+  return link;
 }
 
 

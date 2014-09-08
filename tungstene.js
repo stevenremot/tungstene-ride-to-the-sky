@@ -2355,6 +2355,9 @@ var Bootstrap = function Bootstrap() {
 };
 ($traceurRuntime.createClass)(Bootstrap, {
   preload: function() {},
+  update: function() {
+    this._game._currentScene.handleEvents();
+  },
   create: function() {
     this._game = new Game(this._phaserGame, {"throw-ground": createThrowScene});
     this._game.startScene("throw-ground");
@@ -2362,13 +2365,14 @@ var Bootstrap = function Bootstrap() {
   start: function() {
     this._phaserGame = new Phaser.Game(640, 480, Phaser.AUTO, "tungstene-target", {
       preload: this.preload.bind(this),
-      create: this.create.bind(this)
+      create: this.create.bind(this),
+      update: this.update.bind(this)
     });
   }
 }, {});
 
 
-},{"./Game":2,"./throw-ground/scene":5}],2:[function(require,module,exports){
+},{"./Game":2,"./throw-ground/scene":6}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperties(exports, {
   Game: {get: function() {
@@ -2407,6 +2411,7 @@ var Scene = function Scene(game) {
   this._phaserGame = game;
   this._sprites = [];
   this._groups = [];
+  this.eventHandler = null;
 };
 ($traceurRuntime.createClass)(Scene, {
   addGroup: function(groupConstructor) {
@@ -2454,6 +2459,11 @@ var Scene = function Scene(game) {
   _removeSprite: function(sprite) {
     sprite.destroy();
     this._sprites.splice(this._sprites.indexOf(sprite), 1);
+  },
+  handleEvents: function() {
+    if (this.eventHandler) {
+      this.eventHandler(this._phaserGame.input);
+    }
   }
 }, {});
 
@@ -2469,6 +2479,38 @@ window.addEventListener("load", (function() {
 },{"./Bootstrap":1}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperties(exports, {
+  createTurnEventHandler: {get: function() {
+      return createTurnEventHandler;
+    }},
+  __esModule: {value: true}
+});
+function createTurnEventHandler(scene, link) {
+  var rotating = false;
+  var lastPoint = null;
+  var lastDir = null;
+  return function(input) {
+    var point = new Phaser.Point(input.x, input.y);
+    var dir = null;
+    if (lastPoint) {
+      dir = Phaser.Point.subtract(point, lastPoint);
+    }
+    if (rotating) {
+      if (lastDir && dir.getMagnitudeSq() !== 0) {
+        var scal = lastDir.normalize().cross(dir.normalize());
+        link.body.angularForce = ((scal > 0) ? 100 : -100) * dir.getMagnitudeSq();
+      }
+    } else {
+      rotating = input.mousePointer.isDown;
+    }
+    lastPoint = point;
+    lastDir = dir;
+  };
+}
+
+
+},{}],6:[function(require,module,exports){
+"use strict";
+Object.defineProperties(exports, {
   createScene: {get: function() {
       return createScene;
     }},
@@ -2480,6 +2522,7 @@ var $__1 = require("./sprites"),
     createCarouselSasSprite = $__1.createCarouselSasSprite,
     createGroundCollisionSprite = $__1.createGroundCollisionSprite,
     createCarouselLinkSprite = $__1.createCarouselLinkSprite;
+var createTurnEventHandler = require("./controls").createTurnEventHandler;
 function createScene(game, endCallback) {
   var scene = new Scene(game);
   var groundGroup = game.physics.p2.createCollisionGroup();
@@ -2493,7 +2536,7 @@ function createScene(game, endCallback) {
   });
   var sas = scene.addSprite(createCarouselSasSprite, {
     x: 200,
-    y: 150,
+    y: 75,
     w: 50,
     h: 20,
     group: carouselGroup
@@ -2504,20 +2547,22 @@ function createScene(game, endCallback) {
     y: 0,
     group: groundGroup
   });
-  scene.addSprite(createCarouselLinkSprite, {
+  var link = scene.addSprite(createCarouselLinkSprite, {
     base: base,
     sas: sas,
+    groundGroup: groundGroup,
     posInBase: new Phaser.Point(0, 0),
     posInSas: new Phaser.Point(0, 0),
     offset: 5,
     w: 10,
     group: carouselGroup
   });
+  scene.eventHandler = createTurnEventHandler(scene, link);
   return scene;
 }
 
 
-},{"../Scene":3,"./sprites":6}],6:[function(require,module,exports){
+},{"../Scene":3,"./controls":5,"./sprites":7}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperties(exports, {
   createGroundCollisionSprite: {get: function() {
@@ -2619,7 +2664,7 @@ function createCarouselLinkSprite(game, $__0) {
 }
 
 
-},{}]},{},[1,2,3,4,5,6])
+},{}]},{},[1,2,3,4,5,6,7])
 //
 
 //# sourceMappingURL=tungstene.js.map

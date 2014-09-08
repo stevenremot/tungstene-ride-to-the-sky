@@ -11,6 +11,11 @@ import {
 }
 from "./sprites";
 
+import {
+	createTurnEventHandler
+}
+from "./controls";
+
 export
 function createScene(game, endCallback) {
 	var scene = new Scene(game);
@@ -33,7 +38,7 @@ function createScene(game, endCallback) {
 		createCarouselSasSprite,
 		{
 			x: 200,
-			y: 150,
+			y: 75,
 			w: 50,
 			h: 20,
 			group: carouselGroup
@@ -50,11 +55,12 @@ function createScene(game, endCallback) {
 		}
 	);
 
-	scene.addSprite(
+	var link = scene.addSprite(
 		createCarouselLinkSprite,
 		{
 			base,
 			sas,
+			groundGroup: groundGroup,
 			posInBase: new Phaser.Point(0, 0),
 			posInSas: new Phaser.Point(0, 0),
 			offset: 5,
@@ -62,6 +68,8 @@ function createScene(game, endCallback) {
 			group: carouselGroup
 		}
 	);
+
+	scene.eventHandler = createTurnEventHandler(scene, link);
 
 	return scene;
 }

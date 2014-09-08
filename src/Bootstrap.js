@@ -21,6 +21,10 @@ export class Bootstrap {
 
     }
 
+    update() {
+        this._game._currentScene.handleEvents();
+    }
+
     create() {
         this._game = new Game(
             this._phaserGame, {
@@ -37,7 +41,8 @@ export class Bootstrap {
             Phaser.AUTO,
             "tungstene-target", {
                 preload: this.preload.bind(this),
-                create: this.create.bind(this)
+                create: this.create.bind(this),
+                update: this.update.bind(this)
             }
         );
     }

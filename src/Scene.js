@@ -22,6 +22,7 @@ export class Scene {
         this._phaserGame = game;
         this._sprites = [];
         this._groups = [];
+        this.eventHandler = null;
     }
 
     /**
@@ -104,5 +105,14 @@ export class Scene {
     _removeSprite(sprite) {
         sprite.destroy();
         this._sprites.splice(this._sprites.indexOf(sprite), 1);
+    }
+
+    /**
+     * Process player inputs
+     */
+    handleEvents() {
+        if (this.eventHandler) {
+            this.eventHandler(this._phaserGame.input);
+        }
     }
 }

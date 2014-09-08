@@ -2582,7 +2582,7 @@ function createCarouselSasSprite(game, $__0) {
   var sas = game.add.sprite(x, game.height - y, bitmap);
   game.physics.p2.enable(sas);
   sas.body.setRectangle(w, h);
-  sas.body.mass = 5;
+  sas.body.mass = 1;
   sas.anchor.setTo(0.5, 0.5);
   sas.body.setCollisionGroup(group);
   sas.body.collidesWith = [groundGroup];
@@ -2613,8 +2613,8 @@ function createCarouselLinkSprite(game, $__0) {
   link.body.mass = 0.1;
   link.body.setCollisionGroup(group);
   var maxForce = 20000000;
-  game.physics.p2.createRevoluteConstraint(base, [0, 0], link, [0, -distance / 2], maxForce);
-  game.physics.p2.createRevoluteConstraint(link, [0, distance / 2], sas, [0, 0], maxForce);
+  game.physics.p2.createRevoluteConstraint(base, [0, 0], link, [0, distance / 2], maxForce);
+  game.physics.p2.createRevoluteConstraint(link, [0, -distance / 2], sas, [0, 0], maxForce);
   return link;
 }
 

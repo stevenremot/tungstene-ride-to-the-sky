@@ -22,7 +22,7 @@ export class Scene {
         this._phaserGame = game;
         this._sprites = [];
         this._groups = [];
-        this.eventHandler = null;
+        this.updater = null;
     }
 
     /**
@@ -110,9 +110,9 @@ export class Scene {
     /**
      * Process player inputs
      */
-    handleEvents() {
-        if (this.eventHandler) {
-            this.eventHandler(this._phaserGame.input);
+    update() {
+        if (this.updater) {
+            this.updater(this._phaserGame.input);
         }
     }
 }

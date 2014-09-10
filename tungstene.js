@@ -2356,7 +2356,7 @@ var Bootstrap = function Bootstrap() {
 ($traceurRuntime.createClass)(Bootstrap, {
   preload: function() {},
   update: function() {
-    this._game._currentScene.handleEvents();
+    this._game._currentScene.update();
   },
   create: function() {
     this._game = new Game(this._phaserGame, {"throw-ground": createThrowScene});
@@ -2411,7 +2411,7 @@ var Scene = function Scene(game) {
   this._phaserGame = game;
   this._sprites = [];
   this._groups = [];
-  this.eventHandler = null;
+  this.updater = null;
 };
 ($traceurRuntime.createClass)(Scene, {
   addGroup: function(groupConstructor) {
@@ -2460,9 +2460,9 @@ var Scene = function Scene(game) {
     sprite.destroy();
     this._sprites.splice(this._sprites.indexOf(sprite), 1);
   },
-  handleEvents: function() {
-    if (this.eventHandler) {
-      this.eventHandler(this._phaserGame.input);
+  update: function() {
+    if (this.updater) {
+      this.updater(this._phaserGame.input);
     }
   }
 }, {});
@@ -2482,28 +2482,41 @@ Object.defineProperties(exports, {
   createTurnEventHandler: {get: function() {
       return createTurnEventHandler;
     }},
+  createFlyUpdater: {get: function() {
+      return createFlyUpdater;
+    }},
   __esModule: {value: true}
 });
-function createTurnEventHandler(scene, link) {
-  var rotating = false;
+function createTurnEventHandler(scene, link, sas, endCallback) {
   var lastPoint = null;
   var lastDir = null;
+  var clicking = false;
+  var force = 200;
   return function(input) {
     var point = new Phaser.Point(input.x, input.y);
     var dir = null;
     if (lastPoint) {
       dir = Phaser.Point.subtract(point, lastPoint);
     }
-    if (rotating) {
-      if (lastDir && dir.getMagnitudeSq() !== 0) {
-        var scal = lastDir.normalize().cross(dir.normalize());
-        link.body.angularForce = ((scal > 0) ? 100 : -100) * dir.getMagnitudeSq();
-      }
-    } else {
-      rotating = input.mousePointer.isDown;
+    if (lastDir) {
+      var scal = lastDir.normalize().cross(dir.normalize());
+      var direction = ((scal > 0) ? 1 : -1);
+      link.body.angularForce = direction * force * dir.getMagnitudeSq();
+      sas.body.angularForce = link.body.angularForce / 100;
+    }
+    if (!clicking) {
+      clicking = input.mousePointer.isDown;
+    } else if (input.mousePointer.isUp) {
+      endCallback();
     }
     lastPoint = point;
     lastDir = dir;
+  };
+}
+function createFlyUpdater(game, sas) {
+  return function(input) {
+    game.world.x = sas.x - game.world.width / 2;
+    game.world.y = sas.y - game.world.height / 2;
   };
 }
 
@@ -2522,7 +2535,9 @@ var $__1 = require("./sprites"),
     createCarouselSasSprite = $__1.createCarouselSasSprite,
     createGroundCollisionSprite = $__1.createGroundCollisionSprite,
     createCarouselLinkSprite = $__1.createCarouselLinkSprite;
-var createTurnEventHandler = require("./controls").createTurnEventHandler;
+var $__2 = require("./controls"),
+    createTurnEventHandler = $__2.createTurnEventHandler,
+    createFlyUpdater = $__2.createFlyUpdater;
 function createScene(game, endCallback) {
   var scene = new Scene(game);
   var groundGroup = game.physics.p2.createCollisionGroup();
@@ -2535,29 +2550,34 @@ function createScene(game, endCallback) {
     group: carouselGroup
   });
   var sas = scene.addSprite(createCarouselSasSprite, {
-    x: 200,
-    y: 75,
+    x: 300,
+    y: 50,
     w: 50,
     h: 20,
-    group: carouselGroup
+    group: carouselGroup,
+    groundGroup: groundGroup
   });
   scene.addSprite(createGroundCollisionSprite, {
     sas: sas,
     w: 200,
-    y: 0,
-    group: groundGroup
+    y: 10,
+    group: groundGroup,
+    carouselGroup: carouselGroup
   });
   var link = scene.addSprite(createCarouselLinkSprite, {
     base: base,
     sas: sas,
-    groundGroup: groundGroup,
     posInBase: new Phaser.Point(0, 0),
     posInSas: new Phaser.Point(0, 0),
     offset: 5,
     w: 10,
     group: carouselGroup
   });
-  scene.eventHandler = createTurnEventHandler(scene, link);
+  scene.updater = createTurnEventHandler(scene, link, sas, (function() {
+    game.physics.p2.removeConstraint(link.tungstene.sasConstraint);
+    scene.updater = createFlyUpdater(game, sas);
+  }));
+  game.camera.follow(sas);
   return scene;
 }
 
@@ -2584,16 +2604,22 @@ function createGroundCollisionSprite(game, $__0) {
       sas = $__1.sas,
       w = $__1.w,
       y = $__1.y,
-      group = $__1.group;
-  var bitmap = game.add.bitmapData(w, 100);
-  bitmap.fill(0, 0, 0, 0);
-  var ground = game.add.sprite(sas.position.x, game.height - y + 100);
+      group = $__1.group,
+      carouselGroup = $__1.carouselGroup;
+  var h = 1000;
+  var bitmap = game.add.bitmapData(w, h);
+  bitmap.fill(255, 0, 0, 0);
+  var ground = game.add.sprite(sas.position.x, game.height - y + h / 2, bitmap);
   game.physics.p2.enable(ground, true);
-  ground.body.setRectangle(w, 100);
+  ground.body.setRectangle(w, h);
   ground.body.static = true;
+  ground.body.fixedRotation = true;
   ground.body.setCollisionGroup(group);
+  ground.body.collides(carouselGroup);
   ground.update = function() {
+    this.x = sas.position.x;
     this.body.x = sas.position.x;
+    this.body.data.updateAABB();
   };
   return ground;
 }
@@ -2629,8 +2655,9 @@ function createCarouselSasSprite(game, $__0) {
   sas.body.setRectangle(w, h);
   sas.body.mass = 1;
   sas.anchor.setTo(0.5, 0.5);
+  sas.body.collideWorldBounds = false;
   sas.body.setCollisionGroup(group);
-  sas.body.collidesWith = [groundGroup];
+  sas.body.collides(groundGroup);
   return sas;
 }
 function createCarouselLinkSprite(game, $__0) {
@@ -2659,7 +2686,8 @@ function createCarouselLinkSprite(game, $__0) {
   link.body.setCollisionGroup(group);
   var maxForce = 20000000;
   game.physics.p2.createRevoluteConstraint(base, [0, 0], link, [0, distance / 2], maxForce);
-  game.physics.p2.createRevoluteConstraint(link, [0, -distance / 2], sas, [0, 0], maxForce);
+  link.tungstene = {};
+  link.tungstene.sasConstraint = game.physics.p2.createRevoluteConstraint(link, [0, -distance / 2], sas, [0, 0], maxForce);
   return link;
 }
 

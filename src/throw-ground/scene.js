@@ -12,7 +12,8 @@ import {
 from "./sprites";
 
 import {
-	createTurnEventHandler
+	createTurnEventHandler,
+	createFlyUpdater
 }
 from "./controls";
 
@@ -37,11 +38,12 @@ function createScene(game, endCallback) {
 	var sas = scene.addSprite(
 		createCarouselSasSprite,
 		{
-			x: 200,
-			y: 75,
+			x: 300,
+			y: 50,
 			w: 50,
 			h: 20,
-			group: carouselGroup
+			group: carouselGroup,
+			groundGroup: groundGroup
 		}
 	);
 
@@ -50,8 +52,9 @@ function createScene(game, endCallback) {
 		{
 			sas,
 			w: 200,
-			y: 0,
-			group: groundGroup
+			y: 10,
+			group: groundGroup,
+			carouselGroup: carouselGroup
 		}
 	);
 
@@ -60,7 +63,6 @@ function createScene(game, endCallback) {
 		{
 			base,
 			sas,
-			groundGroup: groundGroup,
 			posInBase: new Phaser.Point(0, 0),
 			posInSas: new Phaser.Point(0, 0),
 			offset: 5,
@@ -69,7 +71,17 @@ function createScene(game, endCallback) {
 		}
 	);
 
-	scene.eventHandler = createTurnEventHandler(scene, link);
+	scene.updater = createTurnEventHandler(
+		scene,
+		link,
+		sas,
+		() => {
+			game.physics.p2.removeConstraint(link.tungstene.sasConstraint);
+			scene.updater = createFlyUpdater(game, sas);
+		}
+	);
+
+	game.camera.follow(sas);
 
 	return scene;
 }

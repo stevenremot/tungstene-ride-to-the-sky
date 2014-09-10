@@ -22,7 +22,7 @@ export class Bootstrap {
     }
 
     update() {
-        this._game._currentScene.handleEvents();
+        this._game._currentScene.update();
     }
 
     create() {

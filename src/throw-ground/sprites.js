@@ -16,19 +16,24 @@
  */
 export
 function createGroundCollisionSprite(game, {
-	sas, w, y, group
+	sas, w, y, group, carouselGroup
 }) {
-	var bitmap = game.add.bitmapData(w, 100);
-	bitmap.fill(0, 0, 0, 0);
+	var h = 1000;
+	var bitmap = game.add.bitmapData(w, h);
+	bitmap.fill(255, 0, 0, 0);
 
-	var ground = game.add.sprite(sas.position.x, game.height - y + 100);
+	var ground = game.add.sprite(sas.position.x, game.height - y + h / 2, bitmap);
 	game.physics.p2.enable(ground, true);
-	ground.body.setRectangle(w, 100);
+	ground.body.setRectangle(w, h);
 	ground.body.static = true;
+	ground.body.fixedRotation = true;
 	ground.body.setCollisionGroup(group);
+	ground.body.collides(carouselGroup);
 
 	ground.update = function () {
+		this.x = sas.position.x;
 		this.body.x = sas.position.x;
+		this.body.data.updateAABB();
 	};
 
 	return ground;
@@ -90,14 +95,18 @@ function createCarouselSasSprite(
 	sas.body.setRectangle(w, h);
 	sas.body.mass = 1;
 	sas.anchor.setTo(0.5, 0.5);
+	sas.body.collideWorldBounds = false;
 	sas.body.setCollisionGroup(group);
-	sas.body.collidesWith = [groundGroup];
+	sas.body.collides(groundGroup);
 
 	return sas;
 }
 
 /**
  * Create the link between carousel base and sas
+ *
+ * Return the sprite with a supplementary attribute tungstene.sasConstraint
+ * that contains the constraint between link and sas.
  *
  * @param {Phaser.Game} game
  * @param {Phaser.Sprite} base
@@ -161,7 +170,9 @@ function createCarouselLinkSprite(
 		maxForce
 	);
 
-	game.physics.p2.createRevoluteConstraint(
+	link.tungstene = {};
+
+	link.tungstene.sasConstraint = game.physics.p2.createRevoluteConstraint(
 		link,
 		[0, -distance / 2],
 		sas,

@@ -82,6 +82,7 @@ function createScene(game, endCallback) {
 	);
 
 	game.camera.follow(sas);
+	game.camera.deadzone = new Phaser.Rectangle(120, 140, 400, 200);
 
 	return scene;
 }

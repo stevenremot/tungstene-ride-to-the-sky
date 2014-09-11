@@ -2387,6 +2387,7 @@ var Game = function Game(game, scenes) {
   this._phaserGame.physics.startSystem(Phaser.Physics.P2JS);
   game.physics.p2.gravity.y = 1200;
   game.physics.p2.restitution = 0.8;
+  game.world.setBounds(0, -9000000, 90000000, 9000480);
 };
 ($traceurRuntime.createClass)(Game, {
   _switchScene: function(newScene) {
@@ -2578,6 +2579,7 @@ function createScene(game, endCallback) {
     scene.updater = createFlyUpdater(game, sas);
   }));
   game.camera.follow(sas);
+  game.camera.deadzone = new Phaser.Rectangle(120, 140, 400, 200);
   return scene;
 }
 

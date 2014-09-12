@@ -30,7 +30,7 @@ export class Game {
 
     _switchScene(newScene) {
         this._currentScene.clear();
-        this.startScene(scene);
+        this.startScene(newScene);
     }
 
     startScene(scene) {

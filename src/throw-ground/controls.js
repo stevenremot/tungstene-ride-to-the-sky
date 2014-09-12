@@ -55,9 +55,41 @@ function createTurnEventHandler(scene, link, sas, endCallback) {
  * @return {Function}
  */
 export
-function createFlyUpdater(game, sas) {
+function createFlyUpdater(game, scene, sas, sasTracker, endCallback) {
+	var sasStopped = false;
+	var downed = false;
+
+	sasTracker.onStop(() => {
+		scene.addSprite(
+			// TODO: Put in sprites.js
+			(game) => {
+				var text = game.add.text(
+					game.camera.x + game.camera.width / 2,
+					game.camera.y + game.camera.height / 2,
+					"Nice job ! Click to restart.",
+					{
+						font: "40px Arial",
+						fill: "white",
+						align: "center"
+					}
+				);
+
+				text.anchor.setTo(0.5, 0.5);
+				return text;
+			}
+		);
+
+		sasStopped = true;
+	});
+
 	return function (input) {
+		sasTracker.checkStopped();
 		game.world.x = sas.x - game.world.width / 2;
 		game.world.y = sas.y - game.world.height / 2;
+
+		if (downed && input.mousePointer.isUp && sasStopped) {
+			endCallback("throw-ground");
+		}
+		downed = input.mousePointer.isDown;
 	};
 }

@@ -91,7 +91,13 @@ function createScene(game, endCallback) {
 		sas,
 		() => {
 			game.physics.p2.removeConstraint(link.tungstene.sasConstraint);
-			scene.updater = createFlyUpdater(game, sas);
+			scene.updater = createFlyUpdater(
+				game,
+				scene,
+				sas,
+				sasTracker,
+				endCallback
+			);
 
 			scene.addSprite(
 				createMetersSprite,

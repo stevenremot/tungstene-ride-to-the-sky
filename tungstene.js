@@ -2392,7 +2392,7 @@ var Game = function Game(game, scenes) {
 ($traceurRuntime.createClass)(Game, {
   _switchScene: function(newScene) {
     this._currentScene.clear();
-    this.startScene(scene);
+    this.startScene(newScene);
   },
   startScene: function(scene) {
     this._currentScene = this._scenes[scene](this._phaserGame, this._switchScene.bind(this));
@@ -2417,16 +2417,16 @@ var Scene = function Scene(game) {
 ($traceurRuntime.createClass)(Scene, {
   addGroup: function(groupConstructor) {
     for (var args = [],
-        $__5 = 1; $__5 < arguments.length; $__5++)
-      args[$__5 - 1] = arguments[$__5];
+        $__1 = 1; $__1 < arguments.length; $__1++)
+      args[$__1 - 1] = arguments[$__1];
     var group = groupConstructor.apply(null, $traceurRuntime.spread([this._phaserGame], args));
     this._groups.push(group);
     return group;
   },
   addSprite: function(spriteConstructor, group) {
     for (var args = [],
-        $__6 = 2; $__6 < arguments.length; $__6++)
-      args[$__6 - 2] = arguments[$__6];
+        $__2 = 2; $__2 < arguments.length; $__2++)
+      args[$__2 - 2] = arguments[$__2];
     var target = this._phaserGame;
     if (group instanceof Phaser.Group) {
       target = group;
@@ -2438,19 +2438,11 @@ var Scene = function Scene(game) {
     return sprite;
   },
   clear: function() {
-    for (var $__1 = this._sprites[Symbol.iterator](),
-        $__2; !($__2 = $__1.next()).done; ) {
-      var sprite = $__2.value;
-      {
-        this._removeSprite(sprite);
-      }
+    while (this._sprites.length > 0) {
+      this._removeSprite(this._sprites[0]);
     }
-    for (var $__3 = this._groups[Symbol.iterator](),
-        $__4; !($__4 = $__3.next()).done; ) {
-      var group = $__4.value;
-      {
-        this._removeGroup(group);
-      }
+    while (this._groups.length > 0) {
+      this._removeGroup(this._groups[0]);
     }
   },
   _removeGroup: function(group) {
@@ -2514,10 +2506,29 @@ function createTurnEventHandler(scene, link, sas, endCallback) {
     lastDir = dir;
   };
 }
-function createFlyUpdater(game, sas) {
+function createFlyUpdater(game, scene, sas, sasTracker, endCallback) {
+  var sasStopped = false;
+  var downed = false;
+  sasTracker.onStop((function() {
+    scene.addSprite((function(game) {
+      var text = game.add.text(game.camera.x + game.camera.width / 2, game.camera.y + game.camera.height / 2, "Nice job ! Click to restart.", {
+        font: "40px Arial",
+        fill: "white",
+        align: "center"
+      });
+      text.anchor.setTo(0.5, 0.5);
+      return text;
+    }));
+    sasStopped = true;
+  }));
   return function(input) {
+    sasTracker.checkStopped();
     game.world.x = sas.x - game.world.width / 2;
     game.world.y = sas.y - game.world.height / 2;
+    if (downed && input.mousePointer.isUp && sasStopped) {
+      endCallback("throw-ground");
+    }
+    downed = input.mousePointer.isDown;
   };
 }
 
@@ -2579,7 +2590,7 @@ function createScene(game, endCallback) {
   });
   scene.updater = createTurnEventHandler(scene, link, sas, (function() {
     game.physics.p2.removeConstraint(link.tungstene.sasConstraint);
-    scene.updater = createFlyUpdater(game, sas);
+    scene.updater = createFlyUpdater(game, scene, sas, sasTracker, endCallback);
     scene.addSprite(createMetersSprite, new Phaser.Point(400, 50), sasTracker, 300);
   }));
   game.camera.follow(sas);
@@ -2600,7 +2611,9 @@ var SpriteTracker = function SpriteTracker(sprite, basePos) {
   this._sprite = sprite;
   this._basePos = basePos;
   this._spriteStopped = false;
-  this._spriteStopCallback = null;
+  this._spriteStopCallback = (function() {
+    return null;
+  });
 };
 ($traceurRuntime.createClass)(SpriteTracker, {
   reset: function() {
@@ -2612,8 +2625,9 @@ var SpriteTracker = function SpriteTracker(sprite, basePos) {
   onStop: function(callback) {
     this._spriteStopCallback = callback;
   },
-  _checkStopped: function() {
-    if (!this._spriteStopped && this.sprite.velocity.x === 0) {
+  checkStopped: function() {
+    var absSpeed = Math.abs(this._sprite.body.velocity.x);
+    if (!this._spriteStopped && absSpeed <= 1e-3) {
       this._spriteStopped = true;
       this._spriteStopCallback();
     }

@@ -8,7 +8,7 @@ export class SpriteTracker {
 		this._sprite = sprite;
 		this._basePos = basePos;
 		this._spriteStopped = false;
-		this._spriteStopCallback = null;
+		this._spriteStopCallback = () => null;
 	}
 
 	reset() {
@@ -26,8 +26,9 @@ export class SpriteTracker {
 		this._spriteStopCallback = callback;
 	}
 
-	_checkStopped() {
-		if (!this._spriteStopped && this.sprite.velocity.x === 0) {
+	checkStopped() {
+		var absSpeed = Math.abs(this._sprite.body.velocity.x);
+		if (!this._spriteStopped &&  absSpeed <= 1e-3) {
 			this._spriteStopped = true;
 			this._spriteStopCallback();
 		}

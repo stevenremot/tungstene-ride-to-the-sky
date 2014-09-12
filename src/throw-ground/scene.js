@@ -13,6 +13,11 @@ import {
 from "./sprites";
 
 import {
+	SpriteTracker
+}
+from "./sprite-tracking";
+
+import {
 	createTurnEventHandler,
 	createFlyUpdater
 }
@@ -46,6 +51,14 @@ function createScene(game, endCallback) {
 			group: carouselGroup,
 			groundGroup: groundGroup
 		}
+	);
+
+	var sasTracker = new SpriteTracker(
+		sas,
+		new Phaser.Point(
+			sas.x,
+			sas.y
+		)
 	);
 
 	scene.addSprite(
@@ -83,7 +96,7 @@ function createScene(game, endCallback) {
 			scene.addSprite(
 				createMetersSprite,
 				new Phaser.Point(400, 50),
-				sas,
+				sasTracker,
 				300
 			);
 		}

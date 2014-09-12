@@ -194,7 +194,7 @@ function getTextPos(camera, posOnScreen) {
  * Creates the
  */
 export
-function createMetersSprite(game, posOnScreen, sas, baseX) {
+function createMetersSprite(game, posOnScreen, sasTracker, baseX) {
 	var [x, y] = getTextPos(game.camera, posOnScreen);
 	var text = game.add.text(x, y, "", {
 		font: "30px Arial",
@@ -203,7 +203,7 @@ function createMetersSprite(game, posOnScreen, sas, baseX) {
 	});
 
 	text.update = function () {
-		text.setText("Meters: " + Math.round((sas.x - baseX) / 10));
+		text.setText("Meters: " + Math.round(sasTracker.position.x / 10));
 		var [x, y] = getTextPos(game.camera, posOnScreen);
 		text.x = x;
 		text.y = y;

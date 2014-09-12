@@ -2537,9 +2537,10 @@ var $__1 = require("./sprites"),
     createGroundCollisionSprite = $__1.createGroundCollisionSprite,
     createCarouselLinkSprite = $__1.createCarouselLinkSprite,
     createMetersSprite = $__1.createMetersSprite;
-var $__2 = require("./controls"),
-    createTurnEventHandler = $__2.createTurnEventHandler,
-    createFlyUpdater = $__2.createFlyUpdater;
+var SpriteTracker = require("./sprite-tracking").SpriteTracker;
+var $__3 = require("./controls"),
+    createTurnEventHandler = $__3.createTurnEventHandler,
+    createFlyUpdater = $__3.createFlyUpdater;
 function createScene(game, endCallback) {
   var scene = new Scene(game);
   var groundGroup = game.physics.p2.createCollisionGroup();
@@ -2559,6 +2560,7 @@ function createScene(game, endCallback) {
     group: carouselGroup,
     groundGroup: groundGroup
   });
+  var sasTracker = new SpriteTracker(sas, new Phaser.Point(sas.x, sas.y));
   scene.addSprite(createGroundCollisionSprite, {
     sas: sas,
     w: 200,
@@ -2578,7 +2580,7 @@ function createScene(game, endCallback) {
   scene.updater = createTurnEventHandler(scene, link, sas, (function() {
     game.physics.p2.removeConstraint(link.tungstene.sasConstraint);
     scene.updater = createFlyUpdater(game, sas);
-    scene.addSprite(createMetersSprite, new Phaser.Point(400, 50), sas, 300);
+    scene.addSprite(createMetersSprite, new Phaser.Point(400, 50), sasTracker, 300);
   }));
   game.camera.follow(sas);
   game.camera.deadzone = new Phaser.Rectangle(120, 140, 400, 200);
@@ -2586,7 +2588,40 @@ function createScene(game, endCallback) {
 }
 
 
-},{"../Scene":3,"./controls":5,"./sprites":7}],7:[function(require,module,exports){
+},{"../Scene":3,"./controls":5,"./sprite-tracking":7,"./sprites":8}],7:[function(require,module,exports){
+"use strict";
+Object.defineProperties(exports, {
+  SpriteTracker: {get: function() {
+      return SpriteTracker;
+    }},
+  __esModule: {value: true}
+});
+var SpriteTracker = function SpriteTracker(sprite, basePos) {
+  this._sprite = sprite;
+  this._basePos = basePos;
+  this._spriteStopped = false;
+  this._spriteStopCallback = null;
+};
+($traceurRuntime.createClass)(SpriteTracker, {
+  reset: function() {
+    this._spriteStopped = false;
+  },
+  get position() {
+    return Phaser.Point.subtract(this._sprite.position, this._basePos);
+  },
+  onStop: function(callback) {
+    this._spriteStopCallback = callback;
+  },
+  _checkStopped: function() {
+    if (!this._spriteStopped && this.sprite.velocity.x === 0) {
+      this._spriteStopped = true;
+      this._spriteStopCallback();
+    }
+  }
+}, {});
+
+
+},{}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperties(exports, {
   createGroundCollisionSprite: {get: function() {
@@ -2700,7 +2735,7 @@ function createCarouselLinkSprite(game, $__0) {
 function getTextPos(camera, posOnScreen) {
   return [camera.x + posOnScreen.x, camera.y + posOnScreen.y];
 }
-function createMetersSprite(game, posOnScreen, sas, baseX) {
+function createMetersSprite(game, posOnScreen, sasTracker, baseX) {
   var $__0 = $traceurRuntime.assertObject(getTextPos(game.camera, posOnScreen)),
       x = $__0[0],
       y = $__0[1];
@@ -2710,7 +2745,7 @@ function createMetersSprite(game, posOnScreen, sas, baseX) {
     align: "center"
   });
   text.update = function() {
-    text.setText("Meters: " + Math.round((sas.x - baseX) / 10));
+    text.setText("Meters: " + Math.round(sasTracker.position.x / 10));
     var $__0 = $traceurRuntime.assertObject(getTextPos(game.camera, posOnScreen)),
         x = $__0[0],
         y = $__0[1];
@@ -2721,7 +2756,7 @@ function createMetersSprite(game, posOnScreen, sas, baseX) {
 }
 
 
-},{}]},{},[1,2,3,4,5,6,7])
+},{}]},{},[1,2,3,4,5,6,7,8])
 //
 
 //# sourceMappingURL=tungstene.js.map

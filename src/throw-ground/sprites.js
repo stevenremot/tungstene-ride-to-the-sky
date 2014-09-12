@@ -182,3 +182,32 @@ function createCarouselLinkSprite(
 
 	return link;
 }
+
+function getTextPos(camera, posOnScreen) {
+	return [
+		camera.x + posOnScreen.x,
+		camera.y + posOnScreen.y
+	];
+}
+
+/**
+ * Creates the
+ */
+export
+function createMetersSprite(game, posOnScreen, sas, baseX) {
+	var [x, y] = getTextPos(game.camera, posOnScreen);
+	var text = game.add.text(x, y, "", {
+		font: "30px Arial",
+		fill: "white",
+		align: "center"
+	});
+
+	text.update = function () {
+		text.setText("Meters: " + Math.round((sas.x - baseX) / 10));
+		var [x, y] = getTextPos(game.camera, posOnScreen);
+		text.x = x;
+		text.y = y;
+	};
+
+	return text;
+}

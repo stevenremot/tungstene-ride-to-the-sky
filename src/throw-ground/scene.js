@@ -7,7 +7,8 @@ import {
 	createCarouselBaseSprite,
 	createCarouselSasSprite,
 	createGroundCollisionSprite,
-	createCarouselLinkSprite
+	createCarouselLinkSprite,
+	createMetersSprite
 }
 from "./sprites";
 
@@ -78,6 +79,13 @@ function createScene(game, endCallback) {
 		() => {
 			game.physics.p2.removeConstraint(link.tungstene.sasConstraint);
 			scene.updater = createFlyUpdater(game, sas);
+
+			scene.addSprite(
+				createMetersSprite,
+				new Phaser.Point(400, 50),
+				sas,
+				300
+			);
 		}
 	);
 

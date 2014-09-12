@@ -2386,7 +2386,7 @@ var Game = function Game(game, scenes) {
   this._currentScene = null;
   this._phaserGame.physics.startSystem(Phaser.Physics.P2JS);
   game.physics.p2.gravity.y = 1200;
-  game.physics.p2.restitution = 0.8;
+  game.physics.p2.restitution = 0.5;
   game.world.setBounds(0, -9000000, 90000000, 9000480);
 };
 ($traceurRuntime.createClass)(Game, {
@@ -2535,7 +2535,8 @@ var $__1 = require("./sprites"),
     createCarouselBaseSprite = $__1.createCarouselBaseSprite,
     createCarouselSasSprite = $__1.createCarouselSasSprite,
     createGroundCollisionSprite = $__1.createGroundCollisionSprite,
-    createCarouselLinkSprite = $__1.createCarouselLinkSprite;
+    createCarouselLinkSprite = $__1.createCarouselLinkSprite,
+    createMetersSprite = $__1.createMetersSprite;
 var $__2 = require("./controls"),
     createTurnEventHandler = $__2.createTurnEventHandler,
     createFlyUpdater = $__2.createFlyUpdater;
@@ -2577,6 +2578,7 @@ function createScene(game, endCallback) {
   scene.updater = createTurnEventHandler(scene, link, sas, (function() {
     game.physics.p2.removeConstraint(link.tungstene.sasConstraint);
     scene.updater = createFlyUpdater(game, sas);
+    scene.addSprite(createMetersSprite, new Phaser.Point(400, 50), sas, 300);
   }));
   game.camera.follow(sas);
   game.camera.deadzone = new Phaser.Rectangle(120, 140, 400, 200);
@@ -2598,6 +2600,9 @@ Object.defineProperties(exports, {
     }},
   createCarouselLinkSprite: {get: function() {
       return createCarouselLinkSprite;
+    }},
+  createMetersSprite: {get: function() {
+      return createMetersSprite;
     }},
   __esModule: {value: true}
 });
@@ -2691,6 +2696,28 @@ function createCarouselLinkSprite(game, $__0) {
   link.tungstene = {};
   link.tungstene.sasConstraint = game.physics.p2.createRevoluteConstraint(link, [0, -distance / 2], sas, [0, 0], maxForce);
   return link;
+}
+function getTextPos(camera, posOnScreen) {
+  return [camera.x + posOnScreen.x, camera.y + posOnScreen.y];
+}
+function createMetersSprite(game, posOnScreen, sas, baseX) {
+  var $__0 = $traceurRuntime.assertObject(getTextPos(game.camera, posOnScreen)),
+      x = $__0[0],
+      y = $__0[1];
+  var text = game.add.text(x, y, "", {
+    font: "30px Arial",
+    fill: "white",
+    align: "center"
+  });
+  text.update = function() {
+    text.setText("Meters: " + Math.round((sas.x - baseX) / 10));
+    var $__0 = $traceurRuntime.assertObject(getTextPos(game.camera, posOnScreen)),
+        x = $__0[0],
+        y = $__0[1];
+    text.x = x;
+    text.y = y;
+  };
+  return text;
 }
 
 

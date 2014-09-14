@@ -18,7 +18,7 @@ export class Bootstrap {
     }
 
     preload() {
-
+        this._phaserGame.load.image("background", "images/background.png");
     }
 
     update() {

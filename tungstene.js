@@ -2354,7 +2354,9 @@ var Bootstrap = function Bootstrap() {
   this._game = null;
 };
 ($traceurRuntime.createClass)(Bootstrap, {
-  preload: function() {},
+  preload: function() {
+    this._phaserGame.load.image("background", "images/background.png");
+  },
   update: function() {
     this._game._currentScene.update();
   },
@@ -2386,7 +2388,7 @@ var Game = function Game(game, scenes) {
   this._currentScene = null;
   this._phaserGame.physics.startSystem(Phaser.Physics.P2JS);
   game.physics.p2.gravity.y = 1200;
-  game.physics.p2.restitution = 0.5;
+  game.physics.p2.restitution = 0.8;
   game.world.setBounds(0, -9000000, 90000000, 9000480);
 };
 ($traceurRuntime.createClass)(Game, {
@@ -2543,6 +2545,7 @@ Object.defineProperties(exports, {
 });
 var Scene = require("../Scene").Scene;
 var $__1 = require("./sprites"),
+    createBackgroundSprite = $__1.createBackgroundSprite,
     createCarouselBaseSprite = $__1.createCarouselBaseSprite,
     createCarouselSasSprite = $__1.createCarouselSasSprite,
     createGroundCollisionSprite = $__1.createGroundCollisionSprite,
@@ -2556,6 +2559,7 @@ function createScene(game, endCallback) {
   var scene = new Scene(game);
   var groundGroup = game.physics.p2.createCollisionGroup();
   var carouselGroup = game.physics.p2.createCollisionGroup();
+  scene.addSprite(createBackgroundSprite);
   var base = scene.addSprite(createCarouselBaseSprite, {
     x: 300,
     y: 0,
@@ -2638,6 +2642,9 @@ var SpriteTracker = function SpriteTracker(sprite, basePos) {
 },{}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperties(exports, {
+  createBackgroundSprite: {get: function() {
+      return createBackgroundSprite;
+    }},
   createGroundCollisionSprite: {get: function() {
       return createGroundCollisionSprite;
     }},
@@ -2655,6 +2662,18 @@ Object.defineProperties(exports, {
     }},
   __esModule: {value: true}
 });
+function createBackgroundSprite(game) {
+  var background = game.add.tileSprite(0, 0, game.camera.width, game.camera.height, "background");
+  background.fixedToCamera = true;
+  background.cameraOffset.x = 0;
+  background.cameraOffset.y = 0;
+  background.tilePosition.x = 0;
+  background.tilePosition.y = -2998 + game.camera.height;
+  background.update = function() {
+    background.tilePosition.x = -game.camera.x;
+  };
+  return background;
+}
 function createGroundCollisionSprite(game, $__0) {
   var $__1 = $traceurRuntime.assertObject($__0),
       sas = $__1.sas,
@@ -2740,7 +2759,7 @@ function createCarouselLinkSprite(game, $__0) {
   link.body.angle = angle * 180 / Math.PI;
   link.body.mass = 0.1;
   link.body.setCollisionGroup(group);
-  var maxForce = 20000000;
+  var maxForce = 1e9;
   game.physics.p2.createRevoluteConstraint(base, [0, 0], link, [0, distance / 2], maxForce);
   link.tungstene = {};
   link.tungstene.sasConstraint = game.physics.p2.createRevoluteConstraint(link, [0, -distance / 2], sas, [0, 0], maxForce);

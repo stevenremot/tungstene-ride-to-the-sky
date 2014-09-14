@@ -1,3 +1,25 @@
+export
+function createBackgroundSprite(game) {
+    var background = game.add.tileSprite(
+        0,
+        0,
+        game.camera.width,
+        game.camera.height,
+        "background"
+    );
+    background.fixedToCamera = true;
+    background.cameraOffset.x = 0;
+    background.cameraOffset.y = 0;
+    background.tilePosition.x = 0;
+    background.tilePosition.y = -2998 + game.camera.height; // TODO how to get image height ?
+
+    background.update = function () {
+        background.tilePosition.x = -game.camera.x;
+    };
+
+    return background;
+}
+
 /**
  * Create the part of the ground on which the sas collides
  *
@@ -161,13 +183,13 @@ function createCarouselLinkSprite(
 	link.body.mass = 0.1;
 	link.body.setCollisionGroup(group);
 
-	var maxForce = 20000000;
+    var maxForce = 1e9;
 	game.physics.p2.createRevoluteConstraint(
 		base,
 		[0, 0],
 		link,
 		[0, distance / 2],
-		maxForce
+        maxForce
 	);
 
 	link.tungstene = {};
@@ -177,7 +199,7 @@ function createCarouselLinkSprite(
 		[0, -distance / 2],
 		sas,
 		[0, 0],
-		maxForce
+        maxForce
 	);
 
 	return link;

@@ -4,6 +4,7 @@ import {
 from "../Scene";
 
 import {
+    createBackgroundSprite,
 	createCarouselBaseSprite,
 	createCarouselSasSprite,
 	createGroundCollisionSprite,
@@ -29,6 +30,8 @@ function createScene(game, endCallback) {
 
 	var groundGroup = game.physics.p2.createCollisionGroup();
 	var carouselGroup = game.physics.p2.createCollisionGroup();
+
+    scene.addSprite(createBackgroundSprite);
 
 	var base = scene.addSprite(
 		createCarouselBaseSprite,

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     viewBox="0 0 50 25">
+  <defs>
+    <style><![CDATA[
+    .base {
+    fill: #cdcd00;
+    stroke: black;
+    stroke-width: 0.1;
+    }
+
+    .pilon {
+    fill: #bebebe;
+    stroke: black;
+    stroke-width: 0.1;
+    }
+
+    .roof1 {
+    fill: #fff0f5;
+    }
+
+    .roof2 {
+    fill: #4169e1;
+    }
+
+    .roof-border {
+    fill-opacity: 0;
+    stroke: black;
+    stroke-width: 0.1;
+    }
+    ]]></style>
+  </defs>
+
+  <rect class="pilon" x="20" y="5" width="10" height="15" />
+
+  <path class="base"
+        d="M 0,17 l0,-3 l50,0 l0,3 A 40,40 0 0 1 0,17 z" />
+
+  <g>
+
+    <path class="roof1"
+          d="M 0,6 l0,2 l10,0 l0,-2 L25,0 A55,55 1 0 0 0,6 z" />
+
+    <path class="roof2"
+          d="M10,6 l0,2 l10,0 l0,-2 L25,0 z" />
+
+    <path class="roof1"
+          d="M20,6 l0,2 l10,0 l0,-2 L25,0 z" />
+
+    <path class="roof2"
+          d="M30,6 l0,2 l10,0 l0,-2 L25,0 z" />
+
+    <path class="roof1"
+          d="M40,6 l0,2 l10,0 l0,-2 A 55,55 1 0 0 25,0 z" />
+
+    <path class="roof-border"
+          d="M 0,6 l0,2 l50,0 l0,-2 A55,55 1 0 0 0,6 z" />
+
+  </g>
+</svg>

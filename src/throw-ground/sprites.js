@@ -77,7 +77,7 @@ function createGroundCollisionSprite(game, {
  */
 export
 function createCarouselBaseSprite(game, {
-	x, y, w, h, group
+	x, y, h, group
 }) {
 	var base = game.add.sprite(x, game.height - y - h * 0.9, "base");
 	game.physics.p2.enable(base);
@@ -103,16 +103,11 @@ function createCarouselBaseSprite(game, {
 export
 function createCarouselSasSprite(
 	game,
-	{ x, y, w, h, group, groundGroup }
+	{ x, y, group, groundGroup }
 ) {
-	var bitmap = game.add.bitmapData(w, h);
-	bitmap.fill(0, 255, 0, 1);
-
-	var sas = game.add.sprite(x, game.height - y, bitmap);
+	var sas = game.add.sprite(x, game.height - y, "sas");
 	game.physics.p2.enable(sas);
-	sas.body.setRectangle(w, h);
 	sas.body.mass = 1;
-	sas.anchor.setTo(0.5, 0.5);
 	sas.body.collideWorldBounds = false;
 	sas.body.setCollisionGroup(group);
 	sas.body.collides(groundGroup);

@@ -2357,6 +2357,7 @@ var Bootstrap = function Bootstrap() {
   preload: function() {
     this._phaserGame.load.image("background", "images/background.png");
     this._phaserGame.load.image("base", "images/base.png");
+    this._phaserGame.load.image("sas", "images/sas.png");
   },
   update: function() {
     this._game._currentScene.update();
@@ -2564,15 +2565,12 @@ function createScene(game, endCallback) {
   var base = scene.addSprite(createCarouselBaseSprite, {
     x: 300,
     y: 0,
-    w: 20,
     h: 200,
     group: carouselGroup
   });
   var sas = scene.addSprite(createCarouselSasSprite, {
     x: 300,
     y: 50,
-    w: 50,
-    h: 20,
     group: carouselGroup,
     groundGroup: groundGroup
   });
@@ -2593,6 +2591,7 @@ function createScene(game, endCallback) {
     w: 10,
     group: carouselGroup
   });
+  sas.bringToTop();
   base.bringToTop();
   scene.updater = createTurnEventHandler(scene, link, sas, (function() {
     game.physics.p2.removeConstraint(link.tungstene.sasConstraint);
@@ -2704,7 +2703,6 @@ function createCarouselBaseSprite(game, $__0) {
   var $__1 = $traceurRuntime.assertObject($__0),
       x = $__1.x,
       y = $__1.y,
-      w = $__1.w,
       h = $__1.h,
       group = $__1.group;
   var base = game.add.sprite(x, game.height - y - h * 0.9, "base");
@@ -2718,17 +2716,11 @@ function createCarouselSasSprite(game, $__0) {
   var $__1 = $traceurRuntime.assertObject($__0),
       x = $__1.x,
       y = $__1.y,
-      w = $__1.w,
-      h = $__1.h,
       group = $__1.group,
       groundGroup = $__1.groundGroup;
-  var bitmap = game.add.bitmapData(w, h);
-  bitmap.fill(0, 255, 0, 1);
-  var sas = game.add.sprite(x, game.height - y, bitmap);
+  var sas = game.add.sprite(x, game.height - y, "sas");
   game.physics.p2.enable(sas);
-  sas.body.setRectangle(w, h);
   sas.body.mass = 1;
-  sas.anchor.setTo(0.5, 0.5);
   sas.body.collideWorldBounds = false;
   sas.body.setCollisionGroup(group);
   sas.body.collides(groundGroup);

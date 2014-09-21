@@ -20,6 +20,7 @@ export class Bootstrap {
     preload() {
         this._phaserGame.load.image("background", "images/background.png");
         this._phaserGame.load.image("base", "images/base.png");
+        this._phaserGame.load.image("sas", "images/sas.png");
     }
 
     update() {

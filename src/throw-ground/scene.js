@@ -38,7 +38,6 @@ function createScene(game, endCallback) {
 		{
 			x: 300,
 			y: 0,
-			w: 20,
 			h: 200,
 			group: carouselGroup
 		}
@@ -49,8 +48,6 @@ function createScene(game, endCallback) {
 		{
 			x: 300,
 			y: 50,
-			w: 50,
-			h: 20,
 			group: carouselGroup,
 			groundGroup: groundGroup
 		}
@@ -88,6 +85,7 @@ function createScene(game, endCallback) {
 		}
 	);
 
+    sas.bringToTop();
     base.bringToTop();
 
 	scene.updater = createTurnEventHandler(

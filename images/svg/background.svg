@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1"
-     viewBox="0 0 200 500">
+     viewBox="0 0 200 501">
   <defs>
     <linearGradient id="skyGradient" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#000040" />
@@ -19,6 +19,15 @@
 
       .star {
       fill: white;
+      }
+
+      .ground {
+      fill: #a9a9a9;
+      }
+
+      .ground-top {
+      stroke: black;
+      stroke-width: 0.2;
       }
       ]]></style>
     </linearGradient>
@@ -603,7 +612,7 @@
   <rect class="building" x="184.513000" y="495.068000" width="6.853000" height="4.932000" />
   <rect class="building" x="191.603000" y="494.108000" width="4.078000" height="5.892000" />
 
-
-
-
+  <!-- ground -->
+  <rect class="ground" x="0" y="500" width="100%" height="1" />
+  <line class="ground-top" x1="0" x2="100%" y1="500" y2="500" />
 </svg>

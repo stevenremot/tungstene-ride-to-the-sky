@@ -45,7 +45,7 @@ function createGroundCollisionSprite(game, {
 	bitmap.fill(255, 0, 0, 0);
 
 	var ground = game.add.sprite(sas.position.x, game.height - y + h / 2, bitmap);
-	game.physics.p2.enable(ground, true);
+	game.physics.p2.enable(ground);
 	ground.body.setRectangle(w, h);
 	ground.body.static = true;
 	ground.body.fixedRotation = true;

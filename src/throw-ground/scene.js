@@ -69,7 +69,7 @@ function createScene(game, endCallback) {
 		{
 			sas,
 			w: 200,
-			y: 10,
+			y: 5,
 			group: groundGroup,
 			carouselGroup: carouselGroup
 		}

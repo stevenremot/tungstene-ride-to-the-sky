@@ -2579,7 +2579,7 @@ function createScene(game, endCallback) {
   scene.addSprite(createGroundCollisionSprite, {
     sas: sas,
     w: 200,
-    y: 10,
+    y: 5,
     group: groundGroup,
     carouselGroup: carouselGroup
   });
@@ -2685,7 +2685,7 @@ function createGroundCollisionSprite(game, $__0) {
   var bitmap = game.add.bitmapData(w, h);
   bitmap.fill(255, 0, 0, 0);
   var ground = game.add.sprite(sas.position.x, game.height - y + h / 2, bitmap);
-  game.physics.p2.enable(ground, true);
+  game.physics.p2.enable(ground);
   ground.body.setRectangle(w, h);
   ground.body.static = true;
   ground.body.fixedRotation = true;

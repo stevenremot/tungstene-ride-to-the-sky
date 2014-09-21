@@ -79,14 +79,10 @@ export
 function createCarouselBaseSprite(game, {
 	x, y, w, h, group
 }) {
-	var bitmap = game.add.bitmapData(w, h);
-	bitmap.fill(255, 0, 0, 1);
-
-	var base = game.add.sprite(x, game.height - y - h * 0.9, bitmap);
-	game.physics.p2.enable(base, true);
+	var base = game.add.sprite(x, game.height - y - h * 0.9, "base");
+	game.physics.p2.enable(base);
 	base.anchor.setTo(0.5, 0.1);
 	base.body.static = true;
-	base.body.setRectangle(1, 1, 0, 0.5);
 	base.body.setCollisionGroup(group);
 
 	return base;

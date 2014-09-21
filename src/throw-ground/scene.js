@@ -88,6 +88,8 @@ function createScene(game, endCallback) {
 		}
 	);
 
+    base.bringToTop();
+
 	scene.updater = createTurnEventHandler(
 		scene,
 		link,

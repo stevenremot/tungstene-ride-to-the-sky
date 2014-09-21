@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     viewBox="0 0 50 50">
+  <defs>
+    <style><![CDATA[
+    .base {
+    fill: #cdcd00;
+    stroke: black;
+    stroke-width: 0.1;
+    fill-rule: evenodd;
+    }
+    ]]></style>
+  </defs>
+  <path class="base"
+        d="M 0,50 L 20,10 A 6,6 1 1 1 30,10 L 50,50 L 45,50 L 40,40 L 10,40 L 5,50 z
+           M 12.5,35 L 38.5,35 L27,12 L23,12 z
+           M 22,6.5 a 3,3 0 1 0 0,-0.000001 z" />
+</svg>

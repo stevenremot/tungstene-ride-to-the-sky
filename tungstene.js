@@ -2356,6 +2356,7 @@ var Bootstrap = function Bootstrap() {
 ($traceurRuntime.createClass)(Bootstrap, {
   preload: function() {
     this._phaserGame.load.image("background", "images/background.png");
+    this._phaserGame.load.image("base", "images/base.png");
   },
   update: function() {
     this._game._currentScene.update();
@@ -2592,6 +2593,7 @@ function createScene(game, endCallback) {
     w: 10,
     group: carouselGroup
   });
+  base.bringToTop();
   scene.updater = createTurnEventHandler(scene, link, sas, (function() {
     game.physics.p2.removeConstraint(link.tungstene.sasConstraint);
     scene.updater = createFlyUpdater(game, scene, sas, sasTracker, endCallback);
@@ -2705,13 +2707,10 @@ function createCarouselBaseSprite(game, $__0) {
       w = $__1.w,
       h = $__1.h,
       group = $__1.group;
-  var bitmap = game.add.bitmapData(w, h);
-  bitmap.fill(255, 0, 0, 1);
-  var base = game.add.sprite(x, game.height - y - h * 0.9, bitmap);
-  game.physics.p2.enable(base, true);
+  var base = game.add.sprite(x, game.height - y - h * 0.9, "base");
+  game.physics.p2.enable(base);
   base.anchor.setTo(0.5, 0.1);
   base.body.static = true;
-  base.body.setRectangle(1, 1, 0, 0.5);
   base.body.setCollisionGroup(group);
   return base;
 }

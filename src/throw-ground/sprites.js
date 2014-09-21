@@ -157,7 +157,8 @@ function createCarouselLinkSprite(
 	var h = distance + 2 * offset;
 
 	var bitmap = game.add.bitmapData(w, h);
-	bitmap.fill(0, 0, 255, 1);
+    bitmap.fill(0, 0, 0, 1);
+    bitmap.rect(1, 1, w-2, h-1, "#bebebe");
 
 	var linkPosition = Phaser.Point.add(
 		p1,

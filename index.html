@@ -3,9 +3,93 @@
     <head>
         <meta charset="utf-8" />
         <title>Tungstene ride to the sky</title>
+        <style>
+            canvas {
+                margin: 1em auto;
+            }
+
+            #instructions {
+                width: 100%;
+            }
+
+            .instruction-tab {
+                display: table;
+                width: 80%;
+                margin: auto;
+            }
+
+            .instruction-line {
+                display: table-row;
+            }
+
+            .instruction-goal {
+                text-align: center;
+                width: 100%;
+            }
+
+            .instruction-icon, .instruction-description {
+                display: table-cell;
+                vertical-align: middle;
+            }
+
+            svg {
+                width: 3em;
+            }
+
+            .svg-simple-line, .svg-arrow {
+                stroke: black;
+                stroke-width: 10;
+                fill: none;
+            }
+
+            .svg-arrow {
+                marker-end: url(#arrow-head);
+            }
+        </style>
     </head>
     <body>
+        <h1>Tungstene ride to the sky</h1>
         <div id="tungstene-target"></div>
+        <div id="instructions">
+            <p class="instruction-goal">Throw the carousel as far as possible !</p>
+            <div class="instruction-tab">
+                <div class="instruction-line">
+                    <div class="instruction-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+                             viewBox="0 0 100 100">
+                            <defs>
+                                <marker id="arrow-head" refx="0" refy="0" orient="auto">
+                                    <path d="M0,12 L12,0 L0,-12 z" style="fill: black" />
+                                </marker>
+                            </defs>
+                            <path class="svg-arrow"
+                                  d="M 90,50 A 40,40 0 1 1 50,10" />
+                        </svg>
+                    </div>
+                    <div class="instruction-description">
+                        <p>Do circles with your cursor / finger to turn the carousel</p>
+                    </div>
+                </div>
+                <div class="instruction-line">
+                    <div class="instruction-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+                             viewBox="0 0 100 100">
+                            <line class="svg-simple-line" x1="50" y1="0" x2="50" y2="33" />
+                            <line class="svg-simple-line" x1="50" y1="66" x2="50" y2="100" />
+                            <line class="svg-simple-line" x1="0" y1="50" x2="33" y2="50" />
+                            <line class="svg-simple-line" x1="66" y1="50" x2="100" y2="50" />
+                            <line class="svg-simple-line" x1="10" y1="10" x2="35" y2="35" />
+                            <line class="svg-simple-line" x1="65" y1="65" x2="90" y2="90" />
+                            <line class="svg-simple-line" x1="10" y1="90" x2="35" y2="65" />
+                            <line class="svg-simple-line" x1="65" y1="35" x2="90" y2="10" />
+                        </svg>
+                    </div>
+                    <div class="instruction-description">
+                        <p>Click / release your finger to launch it</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <script src="bower_components/phaser-official/build/phaser.min.js"></script>
         <script src="tungstene.js"></script>

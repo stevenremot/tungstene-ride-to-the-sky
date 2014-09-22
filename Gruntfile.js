@@ -1,15 +1,15 @@
-var es6ify = require('es6ify');
+var es6ify = require("es6ify");
 
 module.exports = function (grunt) {
     grunt.initConfig({
-        pkg: grunt.file.readJSON('package.json'),
+        pkg: grunt.file.readJSON("package.json"),
         browserify: {
             dev: {
                 files: {
-                    'tmp/src.js': ['src/**/*.js']
+                    "tmp/src.js": ["src/**/*.js"]
                 },
                 options: {
-                    transform: ['es6ify'],
+                    transform: ["es6ify"],
                     browserifyOptions: {
                         debug: true
                     }
@@ -19,7 +19,7 @@ module.exports = function (grunt) {
         concat: {
             dev: {
                 files: {
-                    'tungstene.js': [es6ify.runtime, 'tmp/src.js']
+                    "tungstene.js": [es6ify.runtime, "tmp/src.js"]
                 },
                 options: {
                     sourceMap: true
@@ -28,25 +28,25 @@ module.exports = function (grunt) {
         },
         watch: {
             scripts: {
-                files: ['src/**/*.js'],
-                tasks: ['build:dev'],
+                files: ["src/**/*.js"],
+                tasks: ["build:dev"],
                 options: {
                     spawn: false
                 }
             }
         },
         jshint: {
-            all: ['src/**/*.js'],
+            all: ["src/**/*.js"],
             options: {
-                jshintrc: '.jshintrc'
+                jshintrc: ".jshintrc"
             }
         }
     });
 
-    grunt.loadNpmTasks('grunt-browserify');
-    grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks("grunt-browserify");
+    grunt.loadNpmTasks("grunt-contrib-watch");
+    grunt.loadNpmTasks("grunt-contrib-concat");
+    grunt.loadNpmTasks("grunt-contrib-jshint");
 
-    grunt.registerTask('build:dev', ['jshint', 'browserify:dev', 'concat:dev'])
+    grunt.registerTask("build:dev", ["jshint", "browserify:dev", "concat:dev"]);
 };

@@ -217,7 +217,7 @@ function createMetersSprite(game, posOnScreen, sasTracker, baseX) {
 	});
 
 	text.update = function () {
-		text.setText("Meters: " + Math.round(sasTracker.position.x / 10));
+		text.setText("Meters: " + Math.abs(Math.round(sasTracker.position.x / 10)));
 		var [x, y] = getTextPos(game.camera, posOnScreen);
 		text.x = x;
 		text.y = y;

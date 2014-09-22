@@ -2391,7 +2391,7 @@ var Game = function Game(game, scenes) {
   this._phaserGame.physics.startSystem(Phaser.Physics.P2JS);
   game.physics.p2.gravity.y = 1200;
   game.physics.p2.restitution = 0.8;
-  game.world.setBounds(0, -9000000, 90000000, 9000480);
+  game.world.setBounds(-9000000, -9000000, 90000000, 9000480);
 };
 ($traceurRuntime.createClass)(Game, {
   _switchScene: function(newScene) {
@@ -2770,7 +2770,7 @@ function createMetersSprite(game, posOnScreen, sasTracker, baseX) {
     align: "center"
   });
   text.update = function() {
-    text.setText("Meters: " + Math.round(sasTracker.position.x / 10));
+    text.setText("Meters: " + Math.abs(Math.round(sasTracker.position.x / 10)));
     var $__0 = $traceurRuntime.assertObject(getTextPos(game.camera, posOnScreen)),
         x = $__0[0],
         y = $__0[1];

@@ -25,7 +25,7 @@ export class Game {
         this._phaserGame.physics.startSystem(Phaser.Physics.P2JS);
         game.physics.p2.gravity.y = 1200;
         game.physics.p2.restitution = 0.8;
-        game.world.setBounds(0, -9000000, 90000000, 9000480);
+        game.world.setBounds(-9000000, -9000000, 90000000, 9000480);
     }
 
     _switchScene(newScene) {

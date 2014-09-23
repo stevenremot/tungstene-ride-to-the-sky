@@ -14,8 +14,10 @@
 
             .instruction-tab {
                 display: table;
-                width: 80%;
+                width: 30em;
                 margin: auto;
+                border-collapse: separated;
+                border-spacing: 1em;
             }
 
             .instruction-line {
@@ -58,8 +60,13 @@
                         <svg xmlns="http://www.w3.org/2000/svg" version="1.1"
                              viewBox="0 0 100 100">
                             <defs>
-                                <marker id="arrow-head" refx="0" refy="0" orient="auto">
-                                    <path d="M0,12 L12,0 L0,-12 z" style="fill: black" />
+                                <marker id="arrow-head"
+                                        viewBox="0 -10 15 20"
+                                        refx="0" refy="0"
+                                        markerWidth="3"
+                                        markerHeight="2"
+                                        orient="auto">
+                                    <polyline points="0,10 15,0 0,-10" />
                                 </marker>
                             </defs>
                             <path class="svg-arrow"

@@ -5,6 +5,8 @@ This is an HTML5 game writing for the game jam
 
 It is about throwing a carousel as far as possible.
 
+Test it on [https://dl.dropboxusercontent.com/u/84678909/tungstene-ride-to-the-sky/index.html](https://dl.dropboxusercontent.com/u/84678909/tungstene-ride-to-the-sky/index.html) !
+
 ## Setup for playing
 
 First, run

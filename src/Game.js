@@ -26,6 +26,12 @@ export class Game {
         game.physics.p2.gravity.y = 1200;
         game.physics.p2.restitution = 0.8;
         game.world.setBounds(-9000000, -9000000, 90000000, 9000480);
+        game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+
+        document.getElementById("go-fullscreen").addEventListener(
+            "click",
+            () => game.scale.startFullScreen(false)
+        );
     }
 
     _switchScene(newScene) {

@@ -2493,6 +2493,7 @@ function createTurnEventHandler(scene, link, sas, endCallback) {
   var lastDir = null;
   var clicking = false;
   var force = 200;
+  var pointer = null;
   return function(input) {
     var point = new Phaser.Point(input.x, input.y);
     var dir = null;
@@ -2505,9 +2506,15 @@ function createTurnEventHandler(scene, link, sas, endCallback) {
       link.body.angularForce = direction * force * dir.getMagnitudeSq();
       sas.body.angularForce = link.body.angularForce / 100;
     }
-    if (!clicking) {
-      clicking = input.mousePointer.isDown;
-    } else if (input.mousePointer.isUp) {
+    if (!pointer) {
+      if (input.mousePointer.isDown) {
+        pointer = input.mousePointer;
+        clicking = true;
+      } else if (input.pointer1.isDown) {
+        pointer = input.pointer1;
+        clicking = true;
+      }
+    } else if (clicking && pointer.isUp) {
       endCallback();
     }
     lastPoint = point;
@@ -2533,10 +2540,10 @@ function createFlyUpdater(game, scene, sas, sasTracker, endCallback) {
     sasTracker.checkStopped();
     game.world.x = sas.x - game.world.width / 2;
     game.world.y = sas.y - game.world.height / 2;
-    if (downed && input.mousePointer.isUp && sasStopped) {
+    if (downed && (input.mousePointer.isUp || input.pointer1.isUp) && sasStopped) {
       endCallback("throw-ground");
     }
-    downed = input.mousePointer.isDown;
+    downed = input.mousePointer.isDown || input.pointer1.isDown;
   };
 }
 
